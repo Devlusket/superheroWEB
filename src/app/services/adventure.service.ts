@@ -15,4 +15,25 @@ export class AdventureService {
   findAll(): Observable<Adventure[]> {
     return this.http.get<Adventure[]>(this.apiUrl);
   }
+
+  findById(id: number): Observable<Adventure> {
+    return this.http.get<Adventure>(`${this.apiUrl}/${id}`);
   }
+
+  create(adventure: Adventure): Observable<Adventure> {
+    return this.http.post<Adventure>(this.apiUrl, adventure);
+  }
+
+  update(adventure: Adventure): Observable<Adventure> {
+    return this.http.put<Adventure>(`${this.apiUrl}/${adventure.id}`, adventure);
+  }
+
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+
+
+
+
+}

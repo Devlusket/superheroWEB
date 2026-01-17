@@ -1,38 +1,116 @@
-<!-- <h1 class="text-4xl font-bold text-yellow-500 mb-4">
-  {{ title() }}</h1>
-<ul>
-  @for (adventure of adventures(); track adventure.id) {
-    <li>{{ adventure.id }} - {{ adventure.city }} - {{ adventure.country }} - {{ adventure.state }} {{ adventure.blogCompleted }} - {{ adventure.numPhotos }} - {{ adventure.date }}</li>
-  }
-</ul> -->
-
 
 <h1 class="text-4xl font-bold text-yellow-500 mb-6 text-center">
   {{ title() }}
 </h1>
 
-<ul class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+
+  <form
+  class="bg-gray-900 text-white p-6 rounded-xl mb-8 grid gap-3 md:grid-cols-3"
+  (ngSubmit)="createAdventure()">
+
+  <input class="input" placeholder="Country" [(ngModel)]="form.country" name="country">
+  <input class="input" placeholder="City" [(ngModel)]="form.city" name="city">
+  <input class="input" type="date" [(ngModel)]="form.date" name="date">
+
+  <button class="md:col-span-3 bg-green-500 py-2 rounded text-white font-semibold">
+    Add Adventure
+  </button>
+</form>
+
+
+<ul class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
   @for (adventure of adventures(); track adventure.id) {
-    <li class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 hover:shadow-xl transition-shadow duration-300">
-      <div class="flex justify-between items-center mb-2">
-        <span class="font-semibold text-gray-700 dark:text-gray-200">#{{ adventure.id }}</span>
+    <li class="rounded-xl bg-white dark:bg-gray-900 shadow-md p-5 transition hover:shadow-xl">
+
+      <!-- HEADER -->
+      <div class="flex justify-between items-center mb-3">
+        <span class="text-xs font-semibold text-gray-400">#{{ adventure.id }}</span>
+
         <span
-          class="text-sm px-2 py-1 rounded-full"
-          [class.bg-green-200]="adventure.blogCompleted"
-          [class.bg-red-200]="!adventure.blogCompleted"
-          [class.text-green-800]="adventure.blogCompleted"
-          [class.text-red-800]="!adventure.blogCompleted"
+          class="text-xs px-3 py-1 rounded-full font-medium"
+          [class.bg-green-100]="adventure.blogCompleted"
+          [class.text-green-700]="adventure.blogCompleted"
+          [class.bg-red-100]="!adventure.blogCompleted"
+          [class.text-red-700]="!adventure.blogCompleted"
         >
           {{ adventure.blogCompleted ? 'Completed' : 'Pending' }}
         </span>
       </div>
-      <h2 class="font-bold text-lg text-gray-800 dark:text-gray-100 mb-1">
-        {{ adventure.city }}, {{ adventure.state || 'N/A' }}
-      </h2>
-      <p class="text-gray-600 dark:text-gray-300 mb-2">{{ adventure.country }}</p>
-      <p class="text-sm text-gray-500 dark:text-gray-400">
-        Photos: <span class="font-medium">{{ adventure.numPhotos }}</span> | Date: {{ adventure.date }}
-      </p>
+
+      <!-- VIEW MODE -->
+      @if (editingId() !== adventure.id) {
+        <h2 class="text-lg font-bold text-gray-800 dark:text-gray-100">
+          {{ adventure.city }}
+          <span class="text-sm font-normal text-gray-400">
+            ({{ adventure.state || 'N/A' }})
+          </span>
+        </h2>
+
+        <p class="text-gray-600 dark:text-gray-300">
+          {{ adventure.country }}
+        </p>
+
+        <p class="text-sm text-gray-500 mt-2">
+          📅 {{ adventure.date }} • 📸 {{ adventure.numPhotos }}
+        </p>
+
+        <div class="flex gap-2 mt-4">
+          <button
+            class="px-3 py-1 rounded bg-yellow-500 text-black text-sm hover:bg-yellow-400"
+            (click)="startEdit(adventure.id)">
+            Edit
+          </button>
+
+          <button
+            class="px-3 py-1 rounded bg-red-500 text-white text-sm hover:bg-red-600"
+            (click)="deleteAdventure(adventure.id)">
+            Delete
+          </button>
+        </div>
+      }
+
+      <!-- EDIT MODE -->
+      @else {
+        <div class="space-y-3">
+          <input
+            class="w-full p-2 rounded bg-gray-100 dark:bg-gray-800 border"
+            [(ngModel)]="adventure.city"
+            placeholder="City"
+          />
+
+          <input
+            class="w-full p-2 rounded bg-gray-100 dark:bg-gray-800 border"
+            [(ngModel)]="adventure.country"
+            placeholder="Country"
+          />
+
+          <input
+            type="date"
+            class="w-full p-2 rounded bg-gray-100 dark:bg-gray-800 border"
+            [(ngModel)]="adventure.date"
+          />
+
+          <label class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+            <input type="checkbox" [(ngModel)]="adventure.blogCompleted" />
+            Blog completed
+          </label>
+
+          <div class="flex gap-2 pt-2">
+            <button
+              class="flex-1 bg-green-500 text-white py-2 rounded hover:bg-green-600"
+              (click)="saveAdventure(adventure)">
+              Save
+            </button>
+
+            <button
+              class="flex-1 bg-gray-400 py-2 rounded hover:bg-gray-500"
+              (click)="cancelEdit()">
+              Cancel
+            </button>
+          </div>
+        </div>
+      }
     </li>
   }
 </ul>
+
